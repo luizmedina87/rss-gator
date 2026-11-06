@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // "baseUrl": ".", // fix decprecated config
+    "target": "esnext",
+    // "module": "esnext", // fix decprecated config
+    "module": "nodenext", // fix decprecated config
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    // "moduleResolution": "Node", // fix decprecated config
+    "moduleResolution": "nodenext", // fix decprecated config
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["./src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
