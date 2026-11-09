@@ -10,7 +10,8 @@
     // "moduleResolution": "Node", // fix decprecated config
     "moduleResolution": "nodenext", // fix decprecated config
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"]
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules"]
