@@ -1,4 +1,4 @@
-import { setUser } from "./config.js";
+import { setUser } from "../config.js";
 
 export function handlerLogin(cmdName: string, ...args: string[]) {
   // FIXME inputs from the system need dedicated validators

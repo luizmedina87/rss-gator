@@ -1,7 +1,7 @@
 // import { setUser, readConfig } from "./config.js";
-import { handlerLogin } from "./commandLogin.js";
-import { runCommand } from "./commmands.js";
-import type { CommandsRegistry } from "./commmands.js";
+import { handlerLogin } from "./commands/commandLogin.js";
+import { runCommand } from "./commands/commands.js";
+import type { CommandsRegistry } from "./commands/commands.js";
 
 function main() {
   const cmdReg: CommandsRegistry = {};
