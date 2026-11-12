@@ -43,12 +43,18 @@ export async function handlerRegister(cmdName: string, ...args: string[]) {
   process.exit(0);
 }
 
-export async function handlerReset(cmdName: string) {
+export async function handlerReset(cmdName: string, ...args: string[]) {
+  if (args.length > 0) {
+    console.error(`usage: ${cmdName}`);
+    process.exit(1);
+  }
+
   try {
     await resetUsers();
   } catch (error) {
     console.error("Error running command reset");
     process.exit(1);
   }
+  console.log("Table users successfully reset")
   process.exit(0);
 }
