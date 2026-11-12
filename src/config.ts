@@ -12,7 +12,6 @@ export function setUser(userName: string): void {
   const config = readConfig();
   config.currentUserName = userName;
   writeConfig(config);
-  writeConfig(config);
 }
 
 export function readConfig(): Config {

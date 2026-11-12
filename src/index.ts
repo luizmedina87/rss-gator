@@ -1,11 +1,12 @@
 // import { setUser, readConfig } from "./config.js";
-import { handlerLogin } from "./commands/commandLogin.js";
-import { runCommand } from "./commands/commands.js";
+import { handlerLogin, handlerRegister } from "./commands/users.js";
+import { runCommand, registerCommand } from "./commands/commands.js";
 import type { CommandsRegistry } from "./commands/commands.js";
 
-function main() {
-  const cmdReg: CommandsRegistry = {};
-  cmdReg.login = handlerLogin;
+async function main() {
+  const commandRegistry: CommandsRegistry = {};
+  registerCommand(commandRegistry, "login", handlerLogin);
+  registerCommand(commandRegistry, "register", handlerRegister);
 
   let rawArgs = process.argv.slice(2);
   let cmdName = rawArgs[0];
@@ -16,8 +17,13 @@ function main() {
     process.exit(1);
   }
 
+  if (!(cmdName in commandRegistry)) {
+    console.error(`command '${cmdName}' does not exist`);
+    process.exit(1);
+  }
+
   try {
-    runCommand(cmdReg, cmdName, ...args);
+    await runCommand(commandRegistry, cmdName, ...args);
   } catch (error) {
     if (error instanceof Error) {
       console.error(`Error running command ${cmdName}: ${error.message}`);
@@ -26,6 +32,7 @@ function main() {
     }
     process.exit(1);
   }
+  process.exit(0);
 }
 
 main();

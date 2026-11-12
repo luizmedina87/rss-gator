@@ -1,9 +1,9 @@
 import assert from "node:assert";
 
-type CommandHandler = (cmdName: string, ...args: string[]) => void;
+type CommandHandler = (cmdName: string, ...args: string[]) => Promise<void>;
 export type CommandsRegistry = Record<string, CommandHandler>;
 
-function registerCommand(
+export function registerCommand(
   registry: CommandsRegistry,
   cmdName: string,
   handler: CommandHandler,
@@ -11,13 +11,13 @@ function registerCommand(
   registry[cmdName] = handler;
 }
 
-export function runCommand(
+export async function runCommand(
   registry: CommandsRegistry,
   cmdName: string,
   ...args: string[]
-): void {
+): Promise<void> {
   assert(cmdName in registry, "command not found on registry");
 
   const command = registry[cmdName];
-  command(cmdName, ...args);
+  await command(cmdName, ...args);
 }
