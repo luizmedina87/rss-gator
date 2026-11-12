@@ -13,6 +13,5 @@ export async function getUser(name: string) {
 }
 
 export async function deleteUsers() {
-  const [result] = await db.execute(sql`TRUNCATE TABLE users;`);
-  return result;
+  await db.delete(users);
 }
