@@ -12,7 +12,7 @@ export async function getUser(name: string) {
   return result || undefined;
 }
 
-export async function resetUsers() {
-    const [result] = await db.execute(sql`TRUNCATE TABLE users;`);
-    return result;
+export async function deleteUsers() {
+  const [result] = await db.execute(sql`TRUNCATE TABLE users;`);
+  return result;
 }

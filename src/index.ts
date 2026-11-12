@@ -1,22 +1,23 @@
 // import { setUser, readConfig } from "./config.js";
-import { handlerLogin, handlerRegister, handlerReset } from "./commands/users.js";
+import { handlerLogin, handlerRegister } from "./commands/users.js";
+import { handlerReset } from "./commands/reset.js";
 import { runCommand, registerCommand } from "./commands/commands.js";
 import type { CommandsRegistry } from "./commands/commands.js";
 
 async function main() {
-  const commandRegistry: CommandsRegistry = {};
-  registerCommand(commandRegistry, "login", handlerLogin);
-  registerCommand(commandRegistry, "register", handlerRegister);
-  registerCommand(commandRegistry, "reset", handlerReset);
-
   let rawArgs = process.argv.slice(2);
   let cmdName = rawArgs[0];
   let args = rawArgs.slice(1);
-
+  
   if (!cmdName) {
     console.log("usage: cli <command> [args...]");
     process.exit(1);
   }
+  
+  const commandRegistry: CommandsRegistry = {};
+  registerCommand(commandRegistry, "login", handlerLogin);
+  registerCommand(commandRegistry, "register", handlerRegister);
+  registerCommand(commandRegistry, "reset", handlerReset);
 
   if (!(cmdName in commandRegistry)) {
     console.error(`command '${cmdName}' does not exist`);

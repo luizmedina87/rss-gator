@@ -1,18 +1,16 @@
 import { setUser } from "../config.js";
-import { createUser, getUser, resetUsers } from "../lib/db/queries/users.js";
+import { createUser, getUser } from "../lib/db/queries/users.js";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length !== 1) {
-    console.error(`usage: ${cmdName} <name>`);
-    process.exit(1);
+    throw new Error(`usage: ${cmdName} <name>`);
   }
 
   const username = args[0];
   const usernameData = await getUser(username);
 
   if (usernameData === undefined) {
-    console.error(`Username '${username}' does not exist in the db`);
-    process.exit(1);
+    throw new Error(`Username '${username}' does not exist in the db`);
   }
 
   setUser(username);
@@ -21,40 +19,13 @@ export async function handlerLogin(cmdName: string, ...args: string[]) {
 
 export async function handlerRegister(cmdName: string, ...args: string[]) {
   if (args.length !== 1) {
-    console.error(`usage: ${cmdName} <name>`);
-    process.exit(1);
+    throw new Error(`usage: ${cmdName} <name>`);
   }
 
   const username = args[0];
   console.log(`username is ${username}`);
 
-  try {
-    await createUser(username);
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error("Username already exists");
-    } else {
-      console.error("Error running command createUser");
-    }
-    process.exit(1);
-  }
+  await createUser(username);
 
   setUser(username);
-  process.exit(0);
-}
-
-export async function handlerReset(cmdName: string, ...args: string[]) {
-  if (args.length > 0) {
-    console.error(`usage: ${cmdName}`);
-    process.exit(1);
-  }
-
-  try {
-    await resetUsers();
-  } catch (error) {
-    console.error("Error running command reset");
-    process.exit(1);
-  }
-  console.log("Table users successfully reset")
-  process.exit(0);
 }
