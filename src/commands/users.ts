@@ -1,5 +1,5 @@
-import { setUser } from "../config.js";
-import { createUser, getUser } from "../lib/db/queries/users.js";
+import { setUser, getCurrentUser } from "../config.js";
+import { createUser, getUser, getUsers } from "../lib/db/queries/users.js";
 
 export async function handlerLogin(cmdName: string, ...args: string[]) {
   if (args.length !== 1) {
@@ -23,9 +23,25 @@ export async function handlerRegister(cmdName: string, ...args: string[]) {
   }
 
   const username = args[0];
-  console.log(`username is ${username}`);
 
   await createUser(username);
 
   setUser(username);
+  console.log(`Username ${username} created`);
+  console.log(`Username has been set to ${username}`);
+}
+
+export async function handlerUsers(cmdName: string) {
+  const users = await getUsers(cmdName);
+  const currentUser = getCurrentUser();
+  const userList = users
+    .map(entry => entry.name)
+    .sort()
+    .map(name =>
+      name === currentUser
+        ? `* ${name} (current)`
+        : `* ${name}`,
+    )
+    .join("\n");
+  console.log(userList || "There are currently no users registered");
 }

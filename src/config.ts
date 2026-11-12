@@ -14,6 +14,10 @@ export function setUser(userName: string): void {
   writeConfig(config);
 }
 
+export function getCurrentUser(): string {
+  return readConfig().currentUserName;
+}
+
 export function readConfig(): Config {
   let configFileText;
 
