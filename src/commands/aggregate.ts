@@ -2,6 +2,7 @@ import { fetchFeed } from "../lib/rss.js";
 import { getCurrentUser } from "../config.js";
 import { getUser } from "../lib/db/queries/users.js";
 import { createFeed } from "../lib/db/queries/feeds.js";
+import { isValidURL } from "./utils.js";
 import type { User, Feed } from "../lib/db/schema.js";
 
 export async function agg(_: string, ...args: string[]) {
@@ -9,15 +10,6 @@ export async function agg(_: string, ...args: string[]) {
   const feedURL = "https://www.wagslane.dev/index.xml";
   const metadata = await fetchFeed(feedURL);
   console.log(JSON.stringify(metadata, null, 2));
-}
-
-function isValidURL(urlString: string): boolean {
-  try {
-    const url = new URL(urlString);
-    return url.protocol === "http:" || url.protocol === "https:";
-  } catch (err) {
-    return false;
-  }
 }
 
 export async function addfeed(_: string, ...args: string[]) {
