@@ -1,12 +1,12 @@
 // import { setUser, readConfig } from "./config.js";
+import { agg, addfeed } from "./commands/aggregate.js";
+import { runCommand, registerCommand } from "./commands/commands.js";
+import { handlerReset } from "./commands/reset.js";
 import {
   handlerLogin,
   handlerRegister,
   handlerUsers,
 } from "./commands/users.js";
-import { handlerReset } from "./commands/reset.js";
-import { runCommand, registerCommand } from "./commands/commands.js";
-import { agg } from "./commands/aggregate.js";
 import type { CommandsRegistry } from "./commands/commands.js";
 
 async function main() {
@@ -25,6 +25,7 @@ async function main() {
   registerCommand(commandRegistry, "reset", handlerReset);
   registerCommand(commandRegistry, "users", handlerUsers);
   registerCommand(commandRegistry, "agg", agg);
+  registerCommand(commandRegistry, "addfeed", addfeed);
 
   if (!(cmdName in commandRegistry)) {
     console.error(`command '${cmdName}' does not exist`);
