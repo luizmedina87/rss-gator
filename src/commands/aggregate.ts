@@ -1,7 +1,7 @@
 import { fetchFeed } from "../lib/rss.js";
 import { getCurrentUser } from "../config.js";
 import { getUser } from "../lib/db/queries/users.js";
-import { createFeed } from "../lib/db/queries/feeds.js";
+import { createFeed, getFeeds } from "../lib/db/queries/feeds.js";
 import { isValidURL } from "./utils.js";
 import type { User, Feed } from "../lib/db/schema.js";
 
@@ -45,4 +45,21 @@ export function printFeed(feed: Feed, user: User) {
   );
 }
 
-export async function handlerFeeds(_: string) {}
+export async function handlerFeeds(_: string) {
+  try {
+    const feeds = await getFeeds();
+    for (const feed of feeds) {
+      const name = feed.username;
+      const feedName = feed.feed.name;
+      const feedURL = feed.feed.url;
+      console.log(`User: ${name}\nFeed: ${feedName}\nURL:  ${feedURL}\n\n`)
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      throw new Error(err.message);
+    } else {
+      console.error(`Could not read from database: ${err}`);
+      process.exit(1);
+    }
+  }
+}
