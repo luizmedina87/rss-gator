@@ -18,7 +18,7 @@ export async function addfeed(_: string, ...args: string[]) {
 
   if (args.length < 2) throw new Error("Usage: addfeed <feed name> <feed URL>");
   if (!isValidURL(feedURL)) throw new Error(`Not a valid URL: ${feedURL}`);
-  
+
   const currentUser = getCurrentUser();
   const userData = await getUser(currentUser);
   const userID = userData.id;
@@ -44,3 +44,5 @@ export function printFeed(feed: Feed, user: User) {
     `User: ${user.name} ${user.id} ${user.createdAt} ${user.updatedAt}`,
   );
 }
+
+export async function handlerFeeds(_: string) {}
