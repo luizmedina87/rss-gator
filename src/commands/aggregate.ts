@@ -6,8 +6,7 @@ import { isValidURL } from "./utils.js";
 import type { User, Feed } from "../lib/db/schema.js";
 
 export async function agg(_: string, ...args: string[]) {
-  // const FeedURL = args[0];
-  const feedURL = "https://www.wagslane.dev/index.xml";
+  const feedURL = args[0];
   const metadata = await fetchFeed(feedURL);
   console.log(JSON.stringify(metadata, null, 2));
 }
