@@ -1,6 +1,6 @@
 // import { setUser, readConfig } from "./config.js";
 import { handlerAgg, handlerFeeds, handlerAddfeed, handlerFollow, handlerFollowing } from "./commands/aggregate.js";
-import { runCommand, registerCommand } from "./commands/commands.js";
+import { runCommand, registerCommand, middlewareLoggedIn } from "./commands/commands.js";
 import { handlerReset } from "./commands/reset.js";
 import {
   handlerLogin,
@@ -25,13 +25,10 @@ async function main() {
   registerCommand(commandRegistry, "reset", handlerReset);
   registerCommand(commandRegistry, "users", handlerUsers);
   registerCommand(commandRegistry, "agg", handlerAgg);
-  registerCommand(commandRegistry, "addfeed", handlerAddfeed);
   registerCommand(commandRegistry, "feeds", handlerFeeds);
-  registerCommand(commandRegistry, "follow", handlerFollow);
-  registerCommand(commandRegistry, "following", handlerFollowing);
-  // 
-  // Add a following command. It should print all the names 
-  // of the feeds the current user is following.
+  registerCommand(commandRegistry, "addfeed", await middlewareLoggedIn(handlerAddfeed));
+  registerCommand(commandRegistry, "follow", await middlewareLoggedIn(handlerFollow));
+  registerCommand(commandRegistry, "following", await middlewareLoggedIn(handlerFollowing));
 
   if (!(cmdName in commandRegistry)) {
     console.error(`command '${cmdName}' does not exist`);

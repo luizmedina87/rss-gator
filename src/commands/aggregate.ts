@@ -28,17 +28,16 @@ export async function follow(userID: string, feedID: string) {
   }
 }
 
-export async function handlerAddfeed(_: string, ...args: string[]) {
+export async function handlerAddfeed(_: string, userData: User, ...args: string[]) {
   const feedName = args[0];
   const rawFeedURL = args[1];
+  // const currentUser = getCurrentUser();
+  // const userData = await getUser(currentUser);
+  const userID = userData.id;
 
   if (args.length < 2) throw new Error("Usage: addfeed <feed name> <feed URL>");
   const feedURL = normalizeURL(rawFeedURL);
   if (!feedURL) throw new Error(`Not a valid URL: ${rawFeedURL}`);
-
-  const currentUser = getCurrentUser();
-  const userData = await getUser(currentUser);
-  const userID = userData.id;
 
   const feedList = await getFeed(feedURL);
 
@@ -63,11 +62,11 @@ export async function handlerAddfeed(_: string, ...args: string[]) {
 
   feedFollowData = await follow(userID, feedID);
 
-  console.log(`Successfully saved feed and added to user '${currentUser}'`);
+  console.log(`Successfully saved feed and added to user '${userData.name}'`);
   console.log(`${feedData.url} ${feedFollowData.createdAt}`);
 }
 
-export async function handlerFollow(_: string, ...args: string[]) {
+export async function handlerFollow(_: string, userData: User, ...args: string[]) {
   if (args.length !== 1) throw new Error("Usage: follow <feed URL>");
   const rawFeedURL = args[0];
   const feedURL = normalizeURL(rawFeedURL);
@@ -81,13 +80,12 @@ export async function handlerFollow(_: string, ...args: string[]) {
   }
   const feedData = feedList[0];
   const feedID = feedData.id;
-
-  const currentUser = getCurrentUser();
-  const userData = await getUser(currentUser);
+  // const currentUser = getCurrentUser();
+  // const userData = await getUser(currentUser);
   const userID = userData.id;
 
   await follow(userID, feedID);
-  console.log(`Successfully saved feed and added to user '${currentUser}'`);
+  console.log(`Successfully saved feed and added to user '${userData.name}'`);
   printFeed(feedData, userData);
 }
 
@@ -118,9 +116,9 @@ export async function handlerFeeds(_: string, ...args: string[]) {
   }
 }
 
-export async function handlerFollowing(_: string) {
-  const currentUser = getCurrentUser();
-  const userData = await getUser(currentUser);
+export async function handlerFollowing(_: string, userData: User) {
+  // const currentUser = getCurrentUser();
+  // const userData = await getUser(currentUser);
   const userID = userData.id;
 
   const feedFollowList = await getFeedFollowsForUser(userID);
