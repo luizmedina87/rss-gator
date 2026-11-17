@@ -2,7 +2,7 @@ import { fetchFeed } from "../lib/rss.js";
 import { getCurrentUser } from "../config.js";
 import { getUser } from "../lib/db/queries/users.js";
 import { createFeed, getFeeds, getFeed } from "../lib/db/queries/feeds.js";
-import { isValidURL } from "./utils.js";
+import { normalizeURL } from "../lib/url.js";
 import type { User, Feed } from "../lib/db/schema.js";
 import {
   createFeedFollow,
@@ -30,10 +30,11 @@ export async function follow(userID: string, feedID: string) {
 
 export async function handlerAddfeed(_: string, ...args: string[]) {
   const feedName = args[0];
-  const feedURL = args[1];
+  const rawFeedURL = args[1];
 
   if (args.length < 2) throw new Error("Usage: addfeed <feed name> <feed URL>");
-  if (!isValidURL(feedURL)) throw new Error(`Not a valid URL: ${feedURL}`);
+  const feedURL = normalizeURL(rawFeedURL);
+  if (!feedURL) throw new Error(`Not a valid URL: ${rawFeedURL}`);
 
   const currentUser = getCurrentUser();
   const userData = await getUser(currentUser);
@@ -68,8 +69,9 @@ export async function handlerAddfeed(_: string, ...args: string[]) {
 
 export async function handlerFollow(_: string, ...args: string[]) {
   if (args.length !== 1) throw new Error("Usage: follow <feed URL>");
-  const feedURL = args[0];
-  if (!isValidURL(feedURL)) throw new Error("Unvalid URL");
+  const rawFeedURL = args[0];
+  const feedURL = normalizeURL(rawFeedURL);
+  if (!feedURL) throw new Error("Unvalid URL");
 
   const feedList = await getFeed(feedURL);
   if (feedList.length === 0) {
@@ -84,18 +86,14 @@ export async function handlerFollow(_: string, ...args: string[]) {
   const userData = await getUser(currentUser);
   const userID = userData.id;
 
-  const feedFollowData = await follow(userID, feedID);
+  await follow(userID, feedID);
   console.log(`Successfully saved feed and added to user '${currentUser}'`);
-  // console.log(`${feedData.url} ${feedFollowData.createdAt}`);
   printFeed(feedData, userData);
 }
 
 function printFeed(feed: Feed, user: User) {
   console.log(
-    `Feed: ${feed.name} ${feed.id} ${feed.createdAt} ${feed.updatedAt} ${feed.url}`,
-  );
-  console.log(
-    `User: ${user.name} ${user.id} ${user.createdAt} ${user.updatedAt}`,
+    `User name: ${user.name}\nFeed name: ${feed.name}\nFeed url: ${feed.url}`,
   );
 }
 
@@ -125,5 +123,8 @@ export async function handlerFollowing(_: string) {
   const userData = await getUser(currentUser);
   const userID = userData.id;
 
-  console.log(await getFeedFollowsForUser(userID));
+  const feedFollowList = await getFeedFollowsForUser(userID);
+  feedFollowList.forEach((feed) =>
+    console.log(`Feed name: ${feed.feedname}\nFeed URL: ${feed.feedurl}\n`),
+  );
 }

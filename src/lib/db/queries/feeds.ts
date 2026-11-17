@@ -1,11 +1,15 @@
 import { db } from "../index.js";
 import { feed_follows, feeds, users } from "../schema.js";
 import { eq, asc } from "drizzle-orm";
+import { normalizeURL } from "../../url.js";
 
 export async function createFeed(name: string, url: string) {
+  const normalizedURL = normalizeURL(url);
+  if (!normalizedURL) throw new Error(`Not a valid URL: ${url}`);
+
   const [result] = await db
     .insert(feeds)
-    .values({ name: name, url: url })
+    .values({ name: name, url: normalizedURL })
     .returning();
   return result;
 }
@@ -24,5 +28,8 @@ export async function getFeeds() {
 }
 
 export async function getFeed(url: string) {
-  return await db.select().from(feeds).where(eq(feeds.url, url));
+  const normalizedURL = normalizeURL(url);
+  if (!normalizedURL) throw new Error(`Not a valid URL: ${url}`);
+
+  return await db.select().from(feeds).where(eq(feeds.url, normalizedURL));
 }
