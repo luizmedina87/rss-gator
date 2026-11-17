@@ -1,7 +1,10 @@
-// import { setUser, readConfig } from "./config.js";
 import { handlerAgg } from "./commands/aggregate.js";
 import { handlerFeeds, handlerAddfeed } from "./commands/feeds.js";
-import { handlerFollow, handlerFollowing } from "./commands/feed-follows.js";
+import {
+  handlerFollow,
+  handlerFollowing,
+  handlerUnfollow,
+} from "./commands/feed-follows.js";
 import {
   runCommand,
   registerCommand,
@@ -46,6 +49,11 @@ async function main() {
     commandRegistry,
     "following",
     await middlewareLoggedIn(handlerFollowing),
+  );
+  registerCommand(
+    commandRegistry,
+    "unfollow",
+    await middlewareLoggedIn(handlerUnfollow),
   );
 
   if (!(cmdName in commandRegistry)) {

@@ -4,6 +4,7 @@ import type { User, Feed } from "../lib/db/schema.js";
 import {
   createFeedFollow,
   getFeedFollowsForUser,
+  deleteFeedFollow,
 } from "../lib/db/queries/feed_follows.js";
 
 function printFeed(feed: Feed, user: User) {
@@ -57,4 +58,35 @@ export async function handlerFollowing(_: string, userData: User) {
   feedFollowList.forEach((feed) =>
     console.log(`Feed name: ${feed.feedname}\nFeed URL: ${feed.feedurl}\n`),
   );
+}
+
+export async function handlerUnfollow(
+  _: string,
+  userData: User,
+  ...args: string[]
+) {
+  if (args.length !== 1) throw new Error("Usage: unfollow <feed URL>");
+  const rawFeedURL = args[0];
+  const feedURL = normalizeURL(rawFeedURL);
+  if (!feedURL) throw new Error("Unvalid URL");
+
+  const feedList = await getFeed(feedURL);
+  if (feedList.length === 0) {
+    throw new Error(
+      `${feedURL} not in the database. Create it through addfeed.`,
+    );
+  }
+  const feedData = feedList[0];
+
+  const feedID = feedData.id;
+  const userID = userData.id;
+  const deleted: boolean = await deleteFeedFollow(userID, feedID);
+
+  if (deleted) {
+    console.log(
+      `User ${userData.name} succesfully unfollowed ${feedData.name} ${feedData.url}`,
+    );
+  } else {
+    throw new Error("Something went wrong when unfollowing");
+  }
 }
