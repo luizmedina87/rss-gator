@@ -1,6 +1,4 @@
 import { fetchFeed } from "../lib/rss.js";
-import { getCurrentUser } from "../config.js";
-import { getUser } from "../lib/db/queries/users.js";
 import { createFeed, getFeeds, getFeed } from "../lib/db/queries/feeds.js";
 import { normalizeURL } from "../lib/url.js";
 import type { User, Feed } from "../lib/db/schema.js";
@@ -31,8 +29,6 @@ export async function follow(userID: string, feedID: string) {
 export async function handlerAddfeed(_: string, userData: User, ...args: string[]) {
   const feedName = args[0];
   const rawFeedURL = args[1];
-  // const currentUser = getCurrentUser();
-  // const userData = await getUser(currentUser);
   const userID = userData.id;
 
   if (args.length < 2) throw new Error("Usage: addfeed <feed name> <feed URL>");
@@ -80,8 +76,6 @@ export async function handlerFollow(_: string, userData: User, ...args: string[]
   }
   const feedData = feedList[0];
   const feedID = feedData.id;
-  // const currentUser = getCurrentUser();
-  // const userData = await getUser(currentUser);
   const userID = userData.id;
 
   await follow(userID, feedID);
@@ -117,8 +111,6 @@ export async function handlerFeeds(_: string, ...args: string[]) {
 }
 
 export async function handlerFollowing(_: string, userData: User) {
-  // const currentUser = getCurrentUser();
-  // const userData = await getUser(currentUser);
   const userID = userData.id;
 
   const feedFollowList = await getFeedFollowsForUser(userID);
