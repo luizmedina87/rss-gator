@@ -31,10 +31,12 @@ export async function handlerAgg(
   ...args: string[]
 ): Promise<void> {
   const regex = /^(\d+)(ms|s|m|h)$/;
-  const durationStr = args[0] || "";
+  const durationStr = args[0] || "10s";
 
-  if (args.length !== 1 || !regex.test(durationStr)) {
-    throw new Error(`Usage: ${cmdName} <time between reqs ${String(regex)}>`);
+  if (args.length > 1 || !regex.test(durationStr)) {
+    throw new Error(
+      `Usage: ${cmdName} [time between reqs ${String(regex)}] (default: 10s)`,
+    );
   }
 
   const match = durationStr.match(regex);
@@ -63,7 +65,16 @@ async function scrapeFeeds() {
   const feed = await getNextFeedToFetch();
   if (!feed) return;
 
-  const feedData = await fetchFeed(feed.url);
+  let feedData;
+  try {
+    feedData = await fetchFeed(feed.url);
+  } catch (error) {
+    await markFeedFetched(feed.id);
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Failed to process feed ${feed.url}: ${message}`, {
+      cause: error,
+    });
+  }
 
   await markFeedFetched(feed.id);
 

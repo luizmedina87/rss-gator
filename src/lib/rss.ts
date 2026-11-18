@@ -42,7 +42,7 @@ export async function fetchFeed(FeedURL: string) {
   }
 
   const rssXmlData = await res.text();
-  const parser = new XMLParser({ processEntities: false });
+  const parser = new XMLParser({ processEntities: false, maxNestedTags: 1000 });
   let rssJsonData = parser.parse(rssXmlData);
 
   validateRssData(rssJsonData);
