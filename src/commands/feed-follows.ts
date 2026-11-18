@@ -8,9 +8,12 @@ import {
 } from "../lib/db/queries/feed_follows.js";
 
 function printFeed(feed: Feed, user: User) {
-  console.log(
-    `User name: ${user.name}\nFeed name: ${feed.name}\nFeed url: ${feed.url}`,
-  );
+  console.log(`* ID:            ${feed.id}`);
+  console.log(`* Created:       ${feed.createdAt}`);
+  console.log(`* Updated:       ${feed.updatedAt}`);
+  console.log(`* name:          ${feed.name}`);
+  console.log(`* URL:           ${feed.url}`);
+  console.log(`* User:          ${user.name}`);
 }
 
 export async function follow(userID: string, feedID: string) {

@@ -1,6 +1,6 @@
 import { db } from "../index.js";
-import { feed_follows, feeds, users } from "../schema.js";
-import { eq, asc } from "drizzle-orm";
+import { Feed, feed_follows, feeds, users } from "../schema.js";
+import { eq, asc, sql } from "drizzle-orm";
 import { normalizeURL } from "../../url.js";
 
 export async function createFeed(name: string, url: string) {
@@ -32,4 +32,22 @@ export async function getFeed(url: string) {
   if (!normalizedURL) throw new Error(`Not a valid URL: ${url}`);
 
   return await db.select().from(feeds).where(eq(feeds.url, normalizedURL));
+}
+
+export async function markFeedFetched(feedID: string): Promise<void> {
+  await db
+    .update(feeds)
+    .set({
+      lastFetchedAt: new Date(),
+    })
+    .where(eq(feeds.id, feedID));
+}
+
+export async function getNextFeedToFetch(): Promise<Feed> {
+  const [result] = await db
+    .select()
+    .from(feeds)
+    .orderBy(sql`${feeds.lastFetchedAt} ASC NULLS FIRST`)
+    .limit(1);
+  return result;
 }
