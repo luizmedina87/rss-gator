@@ -22,7 +22,7 @@ export async function handlerAddfeed(
 
   if (feedList.length === 0) {
     try {
-      feedData = await createFeed(feedName, feedURL);
+      feedData = await createFeed(feedName, feedURL, userID);
       feedID = feedData.id;
     } catch (err) {
       if (err instanceof Error) {

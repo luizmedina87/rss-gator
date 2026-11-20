@@ -16,6 +16,14 @@ export type RSSItem = {
   pubDate: string;
 };
 
+export function parsePubDate(rawDate: string) {
+  if (!rawDate || rawDate.trim() === "") {
+    return null;
+  }
+  const parsedDate = new Date(rawDate);
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+}
+
 function validateRssData(rssJsonData: any): void {
   const baseErrorMsg = "Failed to retrieve RSS data";
   if (!rssJsonData) throw new Error(baseErrorMsg);

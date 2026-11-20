@@ -3,13 +3,13 @@ import { Feed, feed_follows, feeds, users } from "../schema.js";
 import { eq, asc, sql } from "drizzle-orm";
 import { normalizeURL } from "../../url.js";
 
-export async function createFeed(name: string, url: string) {
+export async function createFeed(name: string, url: string, userId: string) {
   const normalizedURL = normalizeURL(url);
   if (!normalizedURL) throw new Error(`Not a valid URL: ${url}`);
 
   const [result] = await db
     .insert(feeds)
-    .values({ name: name, url: normalizedURL })
+    .values({ name: name, url: normalizedURL, userId: userId})
     .returning();
   return result;
 }

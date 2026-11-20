@@ -1,8 +1,9 @@
-import { fetchFeed } from "../lib/rss.js";
+import { fetchFeed, parsePubDate } from "../lib/rss.js";
 import {
   getNextFeedToFetch,
   markFeedFetched,
 } from "../lib/db/queries/feeds.js";
+import { createPost } from "../lib/db/queries/posts.js";
 
 function handleError(err: Error) {
   console.log(`Error when running agg: ${err.message}`);
@@ -35,7 +36,7 @@ export async function handlerAgg(
 
   if (args.length > 1 || !regex.test(durationStr)) {
     throw new Error(
-      `Usage: ${cmdName} [time between reqs ${String(regex)}] (default: 10s)`,
+      `Usage: ${cmdName} <time between reqs ${String(regex)} (default: 10s)>`,
     );
   }
 
@@ -79,6 +80,18 @@ async function scrapeFeeds() {
   await markFeedFetched(feed.id);
 
   for (const item of feedData.channel.item) {
-    console.log(item.title);
+    try {
+      createPost(
+        feed.id,
+        item.title,
+        item.description,
+        item.link,
+        parsePubDate(item.pubDate),
+      );
+    } catch (err) {
+      console.error(
+        `Failed to save post ${item.title} from ${feed.name} to database`,
+      );
+    }
   }
 }

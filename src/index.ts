@@ -16,6 +16,7 @@ import {
   handlerUsers,
   handlerRegister,
 } from "./commands/users.js";
+import { handlerBrowse } from "./commands/browse.js";
 import type { CommandsRegistry } from "./commands/commands.js";
 
 async function main() {
@@ -54,6 +55,11 @@ async function main() {
     commandRegistry,
     "unfollow",
     await middlewareLoggedIn(handlerUnfollow),
+  );
+  registerCommand(
+    commandRegistry,
+    "browse",
+    await middlewareLoggedIn(handlerBrowse),
   );
 
   if (!(cmdName in commandRegistry)) {
